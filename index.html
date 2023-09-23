@@ -1,0 +1,738 @@
+<!DOCTYPE HTML>
+<!--
+	Editorial by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Editorial by HTML5 UP</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+	<script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+	<!-- Add other Firebase services if needed (e.g., auth, firestore, etc.) -->
+
+
+	<style>
+		#map {
+			position: relative;
+			width: 100%;
+			height: 600px;
+		}
+
+		.mapboxgl-popup {
+			max-width: 400px;
+			font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+		}
+
+		.marker {
+			display: block;
+			border: none;
+			border-radius: 50%;
+			cursor: pointer;
+			padding: 0;
+		}
+
+		/* Style for the modal (popup) */
+		.modal {
+			display: none;
+			/* Hide the modal by default */
+			position: fixed;
+			/* Position the modal in a fixed position */
+			top: 0;
+			left: 0;
+			width: 100%;
+			/* Full width */
+			height: 100%;
+			/* Full height */
+			background-color: rgba(0, 0, 0, 0.5);
+			/* Semi-transparent black background */
+			z-index: 1000;
+			/* Ensure the modal is on top of other elements */
+		}
+
+		/* Style for the modal content */
+		.modal-content {
+			background-color: white;
+			margin: auto;
+			/* Center the modal horizontally and vertically */
+			padding: 20px;
+			border: 1px solid #888;
+			width: 80%;
+			/* Set the width of the modal content */
+			max-width: 900px;
+			/* Set a maximum width */
+			position: relative;
+			/* To position the close button */
+		}
+
+		#popupFrame {
+			width: 100%;
+			height: 100%;
+		}
+
+		/* Style for the close button */
+		.close {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			font-size: 20px;
+			font-weight: bold;
+			cursor: pointer;
+		}
+
+		/* Add animation when showing the modal */
+		.modal-content {
+			animation: modal-fade-in 0.3s;
+		}
+
+		@keyframes modal-fade-in {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		.marker {
+			background-image: url('https://s10.gifyu.com/images/S4Vwa.gif');
+			background-size: cover;
+			width: 50px;
+			height: 30px;
+			border-radius: 50%;
+			cursor: pointer;
+		}
+	</style>
+</head>
+
+<body class="is-preload">
+
+	<style>
+		.calculation-box {
+			position: absolute;
+			height: 105px;
+			width: 150px;
+			bottom: 40px;
+			left: 500px;
+			background-color: rgba(255, 255, 255, 0.9);
+			padding: 15px;
+			text-align: center;
+			z-index: 1;
+		}
+
+		p {
+			font-family: 'Open Sans';
+			margin: 0;
+			font-size: 13px;
+		}
+	</style>
+
+	<!-- Wrapper -->
+
+	<div id="wrapper">
+
+		<!-- Main -->
+		<div id="main">
+			<div class="inner">
+
+				<!-- Header -->
+				<header>
+
+				</header>
+
+				<!-- Banner -->
+				<section id="banner">
+					<div id='map'></div>
+					<div class="calculation-box">
+						<p>Click the map to draw a polygon.</p>
+						<div id="calculated-area"></div>
+					</div>
+				</section>
+
+
+
+			</div>
+		</div>
+
+		<!-- Sidebar -->
+		<div id="sidebar">
+			<div class="inner">
+
+				<!-- Search -->
+				<section id="search" class="alt">
+					<form method="post" action="#">
+						<input type="text" name="query" id="query" placeholder="Search" />
+					</form>
+				</section>
+
+				<!-- Menu -->
+				<nav id="menu">
+					<header class="major">
+						<h2>Menu</h2>
+					</header>
+					<ul>
+						<li><a href="index.html" id="create-incident-link">Create Incident</a></li>
+						<li><a href="index.html" id="active-incident-link">Active Incident</a></li>
+						<li><a>Responders</a></li>
+						<!-- <li>
+							<span class="opener">Submenu</span>
+							<ul>
+								<li><a href="#">Lorem Dolor</a></li>
+								<li><a href="#">Ipsum Adipiscing</a></li>
+								<li><a href="#">Tempus Magna</a></li>
+								<li><a href="#">Feugiat Veroeros</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Etiam Dolore</a></li>
+						<li><a href="#">Adipiscing</a></li>
+						<li>
+							<span class="opener">Another Submenu</span>
+							<ul>
+								<li><a href="#">Lorem Dolor</a></li>
+								<li><a href="#">Ipsum Adipiscing</a></li>
+								<li><a href="#">Tempus Magna</a></li>
+								<li><a href="#">Feugiat Veroeros</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Maximus Erat</a></li>
+						<li><a href="#">Sapien Mauris</a></li>
+						<li><a href="#">Amet Lacinia</a></li> -->
+					</ul>
+				</nav>
+
+
+				<!-- Footer
+				<footer id="footer">
+					<p class="copyright">&copy; Untitled. All rights reserved. Demo Images: <a
+							href="https://unsplash.com">Unsplash</a>. Design: <a href="https://html5up.net">HTML5
+							UP</a>.</p>
+				</footer> -->
+
+			</div>
+		</div>
+
+		<!-- Incident-sidebar -->
+		<div id="incident-sidebar" class="sidebar">
+			<!-- creating a form -->
+
+			<!-- div for taking the address of the incident by location -->
+			<div class="incident-location">
+
+				<small>Location</small>
+				<!-- adding a location symbol to the left of the below div-->
+				<div class="incident-location-icon">
+					<i class="fas fa-map-marker-alt"></i>
+				</div>
+				<div class="incident-location-address">
+					<input type="text" name="incident-location-address" id="incident-location-address"
+						placeholder="Address" />
+				</div>
+
+			</div>
+
+			<!-- div for taking the description of the incident -->
+			<div class="incident-description">
+				<small>Description</small>
+				<textarea name="incident-description" id="incident-description" rows="4"
+					placeholder="Description"></textarea>
+			</div>
+
+
+			<!-- making 3 select for the type of incident, the severity of the incident and the status of the incident -->
+			<div class="incident-type">
+				<div class="type-of">
+					<small>Type</small>
+					<select name="incident-type" id="incident-type">
+						<option value="fire">Fire</option>
+						<option value="flood">Flood</option>
+						<option value="earthquake">Earthquake</option>
+						<option value="accident">Accident</option>
+						<option value="other">Other</option>
+					</select>
+				</div>
+
+				<div class="incident-severity">
+					<small>Severity</small>
+					<select name="incident-severity" id="incident-severity">
+						<option value="low">Low</option>
+						<option value="medium">Medium</option>
+						<option value="high">High</option>
+					</select>
+				</div>
+			</div>
+
+			<!-- create a select responders tab which on clicking will open window -->
+			<div class="incident-reponder">
+				<small>Responders</small>
+
+				<div class="incident-responder-select">
+					<div class="incident-responder-icon">
+						<i class="fas fa-user"></i>
+					</div>
+					<div>
+						<h3><a href="popup.html" target="_self" onclick="openPopup(); return false;">Select User</a>
+						</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Active Incident -->
+		<div id="active-incident" class="sidebar">
+
+		</div>
+		<!-- Include the pop-up using an iframe -->
+		<!-- The Modal -->
+		<div id="myModal" class="modal">
+			<button onclick="closePopup()">close Popup</button>
+			<div class="modal-content">
+				<iframe id="popupFrame" src="popup.html"></iframe>
+				<button onclick="closePopup()">Cancle</button>
+			</div>
+		</div>
+
+		<audio id="myAudio" src="./siren2.mp3"></audio>
+		<p id="output" style="display: none;"></p>
+		<p id="output2" style="display: none;"></p>
+	</div>
+
+
+	<!-- Scripts -->
+	<script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+	<script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.0/mapbox-gl-draw.js"></script>
+	<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.0/mapbox-gl-draw.css"
+		type="text/css">
+	<script>
+		mapboxgl.accessToken = 'pk.eyJ1Ijoic2lkZGhlc2gxMyIsImEiOiJjbG10ZzBxeG0wNTlqMndxcGF6ZXFob2RpIn0.VEYwkK_ACVU3zcY8vL81qQ';
+		var map = new mapboxgl.Map({
+			container: 'map',
+			style: 'mapbox://styles/mapbox/streets-v11',
+			center: [73.9259, 18.5089], //[-77.04, 38.907],
+			zoom: 14
+		});
+
+		// Create a marker element
+		var marker = new mapboxgl.Marker()
+			.setLngLat(map.getCenter())
+			.addTo(map);
+
+		map.addControl(new mapboxgl.NavigationControl(), 'bottom-right');
+		map.addControl(new mapboxgl.FullscreenControl(), 'bottom-right');
+
+		//adding the geometry of the map
+		const draw = new MapboxDraw({
+			displayControlsDefault: true,
+			// Select which mapbox-gl-draw control buttons to add to the map.
+			controls: {
+				polygon: true,
+				trash: true
+			},
+			// Set mapbox-gl-draw to draw by default.
+			// The user does not have to click the polygon control button first.
+			defaultMode: 'draw_polygon'
+		});
+		map.addControl(draw);
+
+		map.on('draw.create', updateArea);
+		map.on('draw.delete', updateArea);
+		map.on('draw.update', updateArea);
+
+		function updateArea(e) {
+			const data = draw.getAll();
+			const answer = document.getElementById('calculated-area');
+			if (data.features.length > 0) {
+				const area = turf.area(data);
+				// Restrict the area to 2 decimal points.
+				const rounded_area = Math.round(area * 100) / 100;
+				answer.innerHTML = `<p><strong>${rounded_area}</strong></p><p>square meters</p>`;
+			} else {
+				answer.innerHTML = '';
+				if (e.type !== 'draw.delete')
+					alert('Click the map to draw a polygon.');
+			}
+		}
+		// Define an image URL or use an HTMLImageElement
+		const imageUrl = 'https://png.pngtree.com/png-clipart/20210308/original/pngtree-fire-icon-logo-template-vector-png-image_5793088.jpg';
+		// Define the desired width and height
+		const customWidth = 12; // 32 pixels
+		const customHeight = 12; // 32 pixels
+		// Add the image to the map
+
+		map.loadImage(imageUrl, (error, image) => {
+			if (error) throw error;
+
+			map.addImage('custom-marker', image, { width: customWidth, height: customHeight });
+
+			// You can now https://api.mapbox.com/styles/v1/examples/cjikt35x83t1z2rnxpdmjs7y7?use 'custom-marker' as the icon-image in a layer.
+		});
+
+		map.on('load', () => {
+			map.addSource('places', {
+				// This GeoJSON contains features that include an "icon"
+				// property. The value of the "icon" property corresponds
+				// to an image in the Mapbox Streets style's sprite.
+				'type': 'geojson',
+				'data': {
+					'type': 'FeatureCollection',
+					'features': [
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>Make it Mount Pleasant</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="Opens in a new window">Make it Mount Pleasant</a> is a handmade and vintage market and afternoon of live entertainment and kids activities. 12:00-6:00 p.m.</p>',
+								'icon': 'https://i.postimg.cc/BnX0FH68/firefighter.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.038659, 38.931567]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>Mad Men Season Five Finale Watch Party</strong><p>Head to Lounge 201 (201 Massachusetts Avenue NE) Sunday for a <a href="http://madmens5finale.eventbrite.com/" target="_blank" title="Opens in a new window">Mad Men Season Five Finale Watch Party</a>, complete with 60s costume contest, Mad Men trivia, and retro food and drink. 8:00-11:00 p.m. $10 general admission, $20 admission and two hour open bar.</p>',
+								'icon': 'https://i.postimg.cc/BnX0FH68/firefighter.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.003168, 38.894651]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>Big Backyard Beach Bash and Wine Fest</strong><p>EatBar (2761 Washington Boulevard Arlington VA) is throwing a <a href="http://tallulaeatbar.ticketleap.com/2012beachblanket/" target="_blank" title="Opens in a new window">Big Backyard Beach Bash and Wine Fest</a> on Saturday, serving up conch fritters, fish tacos and crab sliders, and Red Apron hot dogs. 12:00-3:00 p.m. $25.grill hot dogs.</p>',
+								'icon': 'https://i.postimg.cc/BnX0FH68/firefighter.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.090372, 38.881189]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>Ballston Arts & Crafts Market</strong><p>The <a href="http://ballstonarts-craftsmarket.blogspot.com/" target="_blank" title="Opens in a new window">Ballston Arts & Crafts Market</a> sets up shop next to the Ballston metro this Saturday for the first of five dates this summer. Nearly 35 artists and crafters will be on hand selling their wares. 10:00-4:00 p.m.</p>',
+								'icon': 'https://i.postimg.cc/BnX0FH68/firefighter.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.111561, 38.882342]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>Seersucker Bike Ride and Social</strong><p>Feeling dandy? Get fancy, grab your bike, and take part in this year\'s <a href="http://dandiesandquaintrelles.com/2012/04/the-seersucker-social-is-set-for-june-9th-save-the-date-and-start-planning-your-look/" target="_blank" title="Opens in a new window">Seersucker Social</a> bike ride from Dandies and Quaintrelles. After the ride enjoy a lawn party at Hillwood with jazz, cocktails, paper hat-making, and more. 11:00-7:00 p.m.</p>',
+								'icon': 'https://i.postimg.cc/BnX0FH68/firefighter.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.052477, 38.943951]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>Capital Pride Parade</strong><p>The annual <a href="http://www.capitalpride.org/parade" target="_blank" title="Opens in a new window">Capital Pride Parade</a> makes its way through Dupont this Saturday. 4:30 p.m. Free.</p>',
+								'icon': 'https://i.postimg.cc/HWbDVDxD/police-car.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.043444, 38.909664]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>Muhsinah</strong><p>Jazz-influenced hip hop artist <a href="http://www.muhsinah.com" target="_blank" title="Opens in a new window">Muhsinah</a> plays the <a href="http://www.blackcatdc.com">Black Cat</a> (1811 14th Street NW) tonight with <a href="http://www.exitclov.com" target="_blank" title="Opens in a new window">Exit Clov</a> and <a href="http://godsilla.bandcamp.com" target="_blank" title="Opens in a new window">Gods’illa</a>. 9:00 p.m. $12.</p>',
+								'icon': 'https://i.postimg.cc/BnX0FH68/firefighter.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.031706, 38.914581]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<h2> Hospital </h2> <strong>A Little Night Music</strong><p>The Arlington Players\' production of Stephen Sondheim\'s  <a href="http://www.thearlingtonplayers.org/drupal-6.20/node/4661/show" target="_blank" title="Opens in a new window"><em>A Little Night Music</em></a> comes to the Kogod Cradle at The Mead Center for American Theater (1101 6th Street SW) this weekend and next. 8:00 p.m.</p>',
+								'icon': 'https://i.postimg.cc/t4443CZV/hospital-1.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.020945, 38.878241]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<h2> Fire Fighter </h2><strong>Truckeroo</strong><p><a href="http://www.truckeroodc.com/www/" target="_blank">Truckeroo</a> brings dozens of food trucks, live music, and games to half and M Street SE (across from Navy Yard Metro Station) today from 11:00 a.m. to 11:00 p.m.</p>',
+								'icon': 'https://i.postimg.cc/BnX0FH68/firefighter.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.007481, 38.876516]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>National Zoo</strong><p>The Smithsonian National Zoological Park, commonly known as the National Zoo, is a great place to explore and learn about animals. Open daily from 8:00 a.m. to 5:00 p.m.</p>',
+								'icon': 'https://i.postimg.cc/BnX0FH68/firefighter.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.049097, 38.930180]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>National Mall</strong><p>The National Mall is a historic park in the heart of Washington, D.C., featuring iconic monuments and memorials. A great place for a leisurely walk or picnic.</p>',
+								'icon': 'https://i.postimg.cc/t4443CZV/hospital-1.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.036870, 38.889939]
+							}
+						},
+						{
+							'type': 'Feature',
+							'properties': {
+								'description':
+									'<strong>Smithsonian Museum</strong><p>Explore the vast collection of the Smithsonian museums, including the National Air and Space Museum and the National Museum of American History.</p>',
+								'icon': 'https://i.postimg.cc/HWbDVDxD/police-car.png',
+								'iconSize': [30, 30]
+							},
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [-77.024055, 38.891007]
+							}
+						}
+
+					]
+				}
+			});
+			// Add a layer showing the places.
+			map.addLayer({
+				'id': 'places',
+				'type': 'symbol',
+				'source': 'places',
+				'layout': {
+					'icon-image': ['get', 'icon'],
+					'icon-allow-overlap': true
+				}
+			});
+			console.log(map.getSource('places')._data);
+
+			// Iterate through the features and add markers
+			map.getSource('places')._data.features.forEach((feature) => {
+				// Create a marker element
+				console.log(feature.geometry.coordinates);
+				console.log(feature.properties.icon);
+				const marker = document.createElement('div');
+				marker.className = 'marker'; // Add your custom marker class here
+				const width = feature.properties.iconSize[0];
+				const height = feature.properties.iconSize[1];
+				marker.style.backgroundImage = `url(${feature.properties.icon})`;
+				marker.style.width = `${width}px`;
+				marker.style.height = `${height}px`;
+				marker.style.backgroundSize = '100%';
+
+				// Create a Mapbox marker
+				new mapboxgl.Marker(marker)
+					.setLngLat(feature.geometry.coordinates)
+					.setPopup(
+						new mapboxgl.Popup({
+							closeButton: true,
+							closeOnClick: false,
+						}).setHTML(feature.properties.description)
+					)
+					.addTo(map);
+			});
+
+			map.on('mouseenter', 'places', (e) => {
+				// Change the cursor style as a UI indicator.
+				map.getCanvas().style.cursor = 'pointer';
+
+				// Copy coordinates array.
+				const coordinates = e.features[0].geometry.coordinates.slice();
+				const description = e.features[0].properties.description;
+
+				// Ensure that if the map is zoomed out such that multiple
+				// copies of the feature are visible, the popup appears
+				// over the copy being pointed to.
+				while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+					coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+				}
+
+				// Populate the popup and set its coordinates
+				// based on the feature found.
+				popup.setLngLat(coordinates).setHTML(description).addTo(map);
+			});
+
+			map.on('mouseleave', 'places', () => {
+				map.getCanvas().style.cursor = '';
+				popup.remove();
+			});
+		});
+
+
+
+	</script>
+
+
+
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/browser.min.js"></script>
+	<script src="assets/js/breakpoints.min.js"></script>
+	<script src="assets/js/util.js"></script>
+	<script src="assets/js/main.js"></script>
+	<script src="./assets/js/incidentsidebar.js"></script>
+
+	<script>
+		let lats = 0;
+		let longs = 0;
+		//take the value from the p tag with id output and put in lat
+		//take the value from the p tag with id output2 and put in long
+
+
+
+		function sleep(ms) {
+			return new Promise(resolve => setTimeout(resolve, ms));
+		}
+
+		// Usage
+		async function example() {
+			console.log("Start");
+			await sleep(2000); // Sleep for 2 seconds (2000 milliseconds)
+			// console.log("End");
+			// console.log("the index.html::latitude", document.getElementById("output").innerHTML);
+			longs = document.getElementById("output2").innerHTML;
+			lats = document.getElementById("output").innerHTML;
+			// console.log("the index.html::longitude", longs);
+			// const el = document.createElement('div');
+			// el.className = 'marker';
+
+			// // make a marker for each feature and add to the map
+			// new mapboxgl.Marker(el).setLngLat().addTo(map);
+
+
+			map.addSource('point', {
+				'type': 'geojson',
+				'data': {
+					'type': 'FeatureCollection',
+					'features': [
+						{
+							'type': 'Feature',
+							'geometry': {
+								'type': 'Point',
+								'coordinates': [longs, lats]
+							}
+						}
+					]
+				}
+			});
+
+			map.addLayer({
+				'id': 'points',
+				'type': 'symbol',
+				'source': 'point',
+				'layout': {
+					'icon-size': 0.25
+				}
+			});
+
+			// Iterate through the features and add markers
+			map.getSource('point')._data.features.forEach((feature) => {
+				// Create a marker element
+				console.log("the cordinates of for the source ::", feature.geometry.coordinates);
+
+				const marker = document.createElement('div');
+				marker.className = 'marker'; // Add your custom marker class here
+				marker.style.backgroundSize = '100%';
+
+				// Create a Mapbox marker
+				new mapboxgl.Marker(marker)
+					.setLngLat(feature.geometry.coordinates)
+					.addTo(map);
+			});
+
+			var newCenter = [longs, lats];
+
+			// Define animation options for zooming out
+			var zoomOutOptions = {
+				duration: 1000, // Duration of the zoom out animation in milliseconds
+				easing: function (t) {
+					return t; // Linear easing for a smooth zoom out
+				}
+			};
+
+			// Define animation options for zooming in
+			var zoomInOptions = {
+				duration: 2000, // Duration of the zoom in animation in milliseconds
+				easing: function (t) {
+					return t; // Linear easing for a smooth zoom in
+				}
+			};
+
+			// Zoom out from the initial center
+			map.easeTo({
+				zoom: 13, // Choose an appropriate zoom level for zooming out
+				...zoomOutOptions
+			});
+
+			// Wait for the zoom-out animation to complete before moving to the new center
+			setTimeout(function () {
+				// Move to the new center and zoom in
+				map.easeTo({
+					center: newCenter,
+					zoom: 15, // Zoom level for zooming in on the new center
+					...zoomInOptions
+				});
+			}, zoomOutOptions.duration);
+		}
+
+
+
+
+
+		console.log(lats);
+		console.log(longs);
+
+	</script>
+
+</body>
+
+</html>

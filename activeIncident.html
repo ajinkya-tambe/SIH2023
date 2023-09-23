@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSA5z2n5P5CkF5F5f5V5" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/main.css" />
+
+    <style>
+        .info-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-header h2 {
+            margin: 0;
+        }
+
+        .dropdown-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .info-content {
+            display: none;
+            /* Initially hide content */
+            margin-top: 10px;
+        }
+
+        .show-content {
+            display: block;
+            /* Show content when the button is clicked */
+        }
+
+        .clock {
+            font-size: 12px;
+            margin-right: 6px;
+            /* Adjust the font size as needed */
+        }
+
+
+        .info-text {
+            background-color: rgba(173, 216, 230, 0.3);
+            max-height: 90px;
+            /* Set a maximum height */
+            overflow: hidden;
+            /* Hide overflowing content */
+            text-overflow: ellipsis;
+            /* Add ellipsis for overflowing text */
+            white-space: nowrap;
+            /* Prevent text from wrapping to the next line */
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-right: 10px;
+            width: calc(100% - 30px);
+        }
+
+        .info-text p {
+            margin: 0;
+            /* Remove default margin to fit content within .info-text */
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <div class="info-box">
+            <div class="info-header">
+                <div class="clock">
+                    <i class="fas fa-clock"></i>
+                    <p class="time">10:30 AM</p>
+                </div>
+                <div class="info-text">
+                    <p class="small-text">Additional Info: This is the additional text you want to display.</p>
+                </div>
+
+                <button class="dropdown-button">▼</button>
+            </div>
+
+            <div class="info-content">
+                <!-- Initially hidden content goes here -->
+                <p>Additional details go here.</p>
+                <p>You can add more content as needed.</p>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script>
+        // Add a click event listener to the dropdown button
+        const dropdownButtons = document.querySelectorAll('.dropdown-button');
+        dropdownButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Toggle the visibility of the content when the button is clicked
+                const content = button.parentElement.nextElementSibling;
+                content.classList.toggle('show-content');
+            });
+        });
+
+    </script>
+
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/browser.min.js"></script>
+    <script src="assets/js/breakpoints.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script src="./assets/js/incidentsidebar.js"></script>
+</body>
+
+</html>
